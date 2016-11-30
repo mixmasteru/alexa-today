@@ -31,13 +31,14 @@ class WikiExport
      */
     protected $arr_exp_cats = array(self::CAT_POWE, self::CAT_WIRT, self::CAT_WIRT, self::CAT_WITE, self::CAT_KULT,
                                     self::CAT_GESE, self::CAT_RELI, self::CAT_KATA, self::CAT_NAUM, self::CAT_SPOR);
-
+    
+    //https://de.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&explaintext=&exsectionformat=plain&redirects=&titles=22._August
     const URL_WIKI      = "http://de.wikipedia.org/w/api.php?action=query&prop=extracts&titles=#DATE#&format=json&continue=";
     const REGEX_START   = "%<h[1234]>Ereignisse<\/h[1234]>%";
     const REGEX_CAT     = "%<h[234]>(.*?)<\/h[234]>%";
     const REGEX_ER      = "%<li>([0-9]{1,4}: .*?)<\/li>%";
     const REGEX_ER_MORE = "%<li>(.*[0-9]{1,4}( v. Chr.)?: .*?)<\/li>%";
-
+    const STR_VCHR      = " v. Chr.";
 
     /**
      * @param $date
@@ -73,7 +74,6 @@ class WikiExport
             }
 
             if (preg_match_all(self::REGEX_ER_MORE, $str_cat, $arr_event)) {
-                //var_export($arr_event);die;
                 foreach ($arr_event[1] as $event) {
                     $event =  $this->cleanEvent($event);
 
@@ -87,15 +87,23 @@ class WikiExport
             }
         }
 
+        ksort($arr_out);
         return $arr_out;
     }
+
 
     /**
      * @param $event
      * @return mixed|string
      */
     protected function cleanEvent($event){
+        $event = trim($event);
         $event = str_ireplace("<span>0</span>","",$event);
+        if(strpos($event,self::STR_VCHR))
+        {
+            $event = "-".str_ireplace(self::STR_VCHR,"",$event);
+        }
+        
         $event = strip_tags(htmlspecialchars_decode($event));
         return $event;
     }
