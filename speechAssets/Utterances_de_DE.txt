@@ -1,0 +1,18 @@
+GetFirstEventIntent was war am {day}
+GetFirstEventIntent was war {day}
+GetFirstEventIntent welche ereignisse gab es am {day}
+GetFirstEventIntent was ist am {day} passiert
+GetFirstEventIntent was ist {day} passiert
+GetFirstEventIntent {day}
+
+GetNextEventIntent ja
+GetNextEventIntent jo
+GetNextEventIntent klaro
+GetNextEventIntent klar
+GetNextEventIntent ja bitte
+GetNextEventIntent auf jeden
+
+AMAZON.StopIntent nein
+AMAZON.StopIntent nee
+AMAZON.StopIntent nein danke
+AMAZON.StopIntent auf keinsten
