@@ -17,6 +17,10 @@ class WikiExport
     const CAT_SPOR = "Sport";
     const CAT_BORN = "Geboren";
     const CAT_DIED = "Gestorben";
+    const CAT_GEST = "Inkrafttreten von Gesetzen und Staatsverträgen";
+    const CAT_UNAB = "Unabhängigkeit";
+    const CAT_AMSA = "Amtsantritte";
+    const CAT_UNTN = "Unternehmensgründungen";
 
     /**
      * all categories of wiki
@@ -24,7 +28,8 @@ class WikiExport
      */
     protected $arr_all_cats = array(self::CAT_POWE, self::CAT_WIRT, self::CAT_WIRT, self::CAT_WITE, self::CAT_KULT,
                                     self::CAT_GESE, self::CAT_RELI, self::CAT_KATA, self::CAT_NAUM, self::CAT_SPOR,
-                                    self::CAT_BORN, self::CAT_DIED);
+                                    self::CAT_BORN, self::CAT_DIED, self::CAT_GESE, self::CAT_UNAB, self::CAT_AMSA,
+                                    self::CAT_UNTN);
     /**
      * all categories to export
      * @var array
@@ -46,9 +51,9 @@ class WikiExport
      */
     public function exportEvents($date){
 
-        $arr_out	= array();
-        $date_str 	= trim(strftime("%e._%B",strtotime($date)));
-        $url		= str_ireplace("#DATE#",$date_str,self::URL_WIKI);
+        $arr_out    = array();
+        $date_str   = trim(strftime("%e._%B",strtotime($date)));
+        $url        = str_ireplace("#DATE#", $date_str,self::URL_WIKI);
 
         $page		= file_get_contents($url);
         $arr_data	= json_decode($page,true);
@@ -63,7 +68,7 @@ class WikiExport
             $str_cat      = $arr_cats[$i];
             $str_cat_raw  = strip_tags($str_cat);
             $str_cat_raw  = str_ireplace(array('§'), '', $str_cat_raw);
-            $arr_event    = array();
+            $arr_event    = ['events' => [],'count' => 0];
 
             if (in_array($str_cat_raw,$this->arr_all_cats)) {
                 $act_cat = $str_cat_raw;
@@ -81,13 +86,14 @@ class WikiExport
                     $year = substr($event, 0 ,$year_stop);
 
                     $event = substr($event,$year_stop+2); //cut year
-                    $arr_out[$year][] = $event;
+                    $arr_out['events'][$year][] = $event;
                 }
 
             }
         }
 
-        ksort($arr_out);
+        $arr_out['count'] = count($arr_out['events']); 
+        ksort($arr_out['events']);
         return $arr_out;
     }
 
